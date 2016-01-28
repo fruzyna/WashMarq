@@ -100,7 +100,7 @@ public class BuildingActivity extends AppCompatActivity
             if (status.equals("Available"))
             {
                 view.setBackgroundColor(Color.parseColor("#4CAF50"));
-            } else if (status.equals("In use"))
+            } else if (status.equals("In use") || status.equals("Not online") || status.equals("Out of order"))
             {
                 view.setBackgroundColor(Color.parseColor("#F44336"));
             } else if (status.equals("Almost done") || status.equals("End of cycle") || status.equals("Ready to start") || status.equals("Payment in progress"))

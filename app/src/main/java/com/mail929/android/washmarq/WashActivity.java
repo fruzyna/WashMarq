@@ -27,9 +27,9 @@ public class WashActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wash);
 
-        final String[] urls = {"Abbottsford-Hall.aspx", "Carpenter-Tower.aspx", "Cobeen-Hall.aspx", "Gilman-Building.aspx",
-                "Mashuda-Hall.aspx", "McCabe-Hall.aspx", "McCormick-Hall.aspx", "O'Donnell-Hall.aspx", "Schroeder-Hall.aspx",
-                "Straz-Tower.aspx"};
+        final String[] urls = {"Abbottsford-Hall.aspx", "Campus-Town-East-Basement.aspx", "Campus-Town-East-2nd-Floor.aspx", "Campus-Town-East-3rd-Floor.aspx", "Campus-Town-East-4th-Floor.aspx", "Campus-Town-West-2nd-Floor.aspx", "Campus-Town-West-3rd-Floor.aspx", "Campus-Town-West-4th-Floor.aspx", "Carpenter-Tower.aspx", "Cobeen-Hall.aspx",
+                "Gilman-Building.aspx", "Humphrey-Hall-1st-Floor.aspx", "Humphrey-Hall-2nd-Floor.aspx", "Humphrey-Hall-3rd-Floor.aspx",  "Humphrey-Hall-4th-Floor.aspx", "Humphrey-Hall-5th-Floor.aspx", "Humphrey-Hall-6th-Floor.aspx", "Mashuda-Hall.aspx", "McCabe-Hall.aspx", "McCormick-Hall.aspx",
+                "O'Donnell-Hall.aspx", "Schroeder-Hall.aspx", "Straz-Tower.aspx"};
         ListView list = (ListView) findViewById(R.id.list);
         list.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, urls)
         {
