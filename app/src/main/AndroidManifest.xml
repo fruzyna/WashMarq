@@ -18,6 +18,8 @@
         </activity>
         <activity android:name=".BuildingActivity">
         </activity>
+    <activity android:name=".SettingsActivity">
+    </activity>
     </application>
 
 </manifest>

@@ -2,9 +2,7 @@ package com.mail929.android.washmarq;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -119,6 +117,10 @@ public class BuildingActivity extends AppCompatActivity
                 machines = DataFetcher.machineList;
                 updateList();
                 break;
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
         }
         return true;
     }
@@ -126,8 +128,8 @@ public class BuildingActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);
+        // Inflate the inbuilding; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.inbuilding, menu);
         return true;
     }
 }
