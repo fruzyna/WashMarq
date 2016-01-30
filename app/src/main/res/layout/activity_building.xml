@@ -5,25 +5,28 @@
 
     <CheckBox
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:text="Show Washers"
         android:id="@+id/washers"
+        android:checked="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <CheckBox
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:text="Show Dryers"
         android:id="@+id/dryers"
+        android:checked="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/washers">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

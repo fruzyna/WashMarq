@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ public class BuildingActivity extends AppCompatActivity
 {
     ArrayList<Machine> machines;
     LinearLayout list;
+    CheckBox washers;
+    CheckBox dryers;
     String url = "straz-tower.aspx";
 
     @Override
@@ -36,6 +39,24 @@ public class BuildingActivity extends AppCompatActivity
         machines = DataFetcher.machineList;
         list = (LinearLayout) findViewById(R.id.list);
 
+        washers = ((CheckBox) findViewById(R.id.washers));
+        washers.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                updateList();
+            }
+        });
+        dryers = ((CheckBox) findViewById(R.id.dryers));
+        dryers.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                updateList();
+            }
+        });
         DataFetcher.fetchData(url);
         machines = DataFetcher.machineList;
         updateList();
@@ -105,7 +126,20 @@ public class BuildingActivity extends AppCompatActivity
             {
                 view.setBackgroundColor(Color.parseColor("#FFEB3B"));
             }
-            list.addView(view);
+            if(type.equals("Washer"))
+            {
+                if(washers.isChecked())
+                {
+                    list.addView(view);
+                }
+            }
+            else
+            {
+                if(dryers.isChecked())
+                {
+                    list.addView(view);
+                }
+            }
         }
     }
 
