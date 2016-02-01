@@ -1,6 +1,7 @@
 package com.mail929.android.washmarq;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,13 +24,17 @@ public class BuildingActivity extends AppCompatActivity
     LinearLayout list;
     CheckBox washers;
     CheckBox dryers;
+    CheckBox unavailable;
     String url = "straz-tower.aspx";
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
+
+        prefs = getSharedPreferences("WASHMARQ", 0);
 
         Intent intent = getIntent();
         url = intent.getExtras().getString("URL");
@@ -41,6 +46,15 @@ public class BuildingActivity extends AppCompatActivity
 
         washers = ((CheckBox) findViewById(R.id.washers));
         washers.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                updateList();
+            }
+        });
+        unavailable = ((CheckBox) findViewById(R.id.unavailable));
+        unavailable.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -96,7 +110,7 @@ public class BuildingActivity extends AppCompatActivity
 
         for (int i = 0; i < machines.size(); i++)
         {
-            View view = inflater.inflate(android.R.layout.simple_list_item_2, list, false);
+            View view = inflater.inflate(R.layout.listitem_machine, list, false);
 
             Machine m = machines.get(i);
             String status = m.status;
@@ -104,10 +118,10 @@ public class BuildingActivity extends AppCompatActivity
             String type = m.type;
             int time = m.time;
 
-            TextView nametv = (TextView) view.findViewById(android.R.id.text1);
+            TextView nametv = (TextView) view.findViewById(R.id.top);
             nametv.setText(type + " " + name);
 
-            TextView statustv = (TextView) view.findViewById(android.R.id.text2);
+            TextView statustv = (TextView) view.findViewById(R.id.bottom);
             if (time > 0)
             {
                 statustv.setText(status + " - " + time + " minutes remaining");
@@ -116,30 +130,44 @@ public class BuildingActivity extends AppCompatActivity
                 statustv.setText(status);
             }
 
+            View side = view.findViewById(R.id.view);
             if (status.equals("Available"))
             {
-                view.setBackgroundColor(Color.parseColor("#4CAF50"));
+                side.setBackgroundColor(Color.parseColor("#4CAF50"));
             } else if (status.equals("In use") || status.equals("Not online") || status.equals("Out of order"))
             {
-                view.setBackgroundColor(Color.parseColor("#F44336"));
+                side.setBackgroundColor(Color.parseColor("#F44336"));
             } else if (status.equals("Almost done") || status.equals("End of cycle") || status.equals("Ready to start") || status.equals("Payment in progress"))
             {
-                view.setBackgroundColor(Color.parseColor("#FFEB3B"));
+                side.setBackgroundColor(Color.parseColor("#FFEB3B"));
             }
-            if(type.equals("Washer"))
+            if(status.equals("Available") || unavailable.isChecked())
             {
-                if(washers.isChecked())
+                if(type.equals("Washer"))
                 {
-                    list.addView(view);
+                    if(washers.isChecked())
+                    {
+                        list.addView(view);
+                    }
+                }
+                else
+                {
+                    if(dryers.isChecked())
+                    {
+                        list.addView(view);
+                    }
                 }
             }
-            else
+
+            view.setOnLongClickListener(new View.OnLongClickListener()
             {
-                if(dryers.isChecked())
+                @Override
+                public boolean onLongClick(View v)
                 {
-                    list.addView(view);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    return false;
                 }
-            }
+            });
         }
     }
 
