@@ -1,5 +1,6 @@
 package com.mail929.android.washmarq;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -114,7 +116,7 @@ public class BuildingActivity extends AppCompatActivity
 
             Machine m = machines.get(i);
             String status = m.status;
-            String name = m.name;
+            final String name = m.name;
             String type = m.type;
             int time = m.time;
 
@@ -141,7 +143,11 @@ public class BuildingActivity extends AppCompatActivity
             {
                 side.setBackgroundColor(Color.parseColor("#FFEB3B"));
             }
-            if(status.equals("Available") || unavailable.isChecked())
+            if(prefs.getString("FAVE_MACHINE", "NONE").equals(url + ":" + name))
+            {
+                list.addView(view, 0);
+            }
+            else if(status.equals("Available") || unavailable.isChecked())
             {
                 if(type.equals("Washer"))
                 {
@@ -159,12 +165,24 @@ public class BuildingActivity extends AppCompatActivity
                 }
             }
 
+            final Context c = this;
             view.setOnLongClickListener(new View.OnLongClickListener()
             {
                 @Override
                 public boolean onLongClick(View v)
                 {
                     SharedPreferences.Editor editor = prefs.edit();
+                    if(!prefs.getString("FAVE_MACHINE", "NONE").equals(url + ":" + name))
+                    {
+                        editor.putString("FAVE_MACHINE", url + ":" + name);
+                        Toast.makeText(c, "Set favorite machine to: " + name, Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        editor.putString("FAVE_MACHINE", "NONE");
+                        Toast.makeText(c, "Removed favorite machine", Toast.LENGTH_SHORT).show();
+                    }
+                    editor.commit();
                     return false;
                 }
             });
