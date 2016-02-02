@@ -41,6 +41,7 @@ public class SettingsActivity extends PreferenceActivity
 
         SharedPreferences prefs = getSharedPreferences("WASHMARQ", 0);
         String fave = prefs.getString("FAVE", "NONE");
+        String faveMach = prefs.getString("FAVE_MACHINE", "NONE");
 
 
         PreferenceScreen ps = getPreferenceManager().createPreferenceScreen(this);
@@ -49,7 +50,6 @@ public class SettingsActivity extends PreferenceActivity
         gen.setTitle("General");
         ps.addPreference(gen);
 
-        //Allows user to sort lists  to their choosing
         Preference sort = new Preference(this);
         sort.setTitle("Auto Open Building");
 
@@ -61,7 +61,31 @@ public class SettingsActivity extends PreferenceActivity
         {
             sort.setSummary("Automatically opens " + fave.replace("-", " ").replace(".aspx", " "));
         }
-        sort.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        sort.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+        {
+            @Override
+            public boolean onPreferenceClick(Preference preference)
+            {
+                DialogFragment dialog = new ChooseFavoriteDialog();
+                dialog.show(getFragmentManager(), "");
+                return true;
+            }
+        });
+        gen.addPreference(sort);
+
+
+        Preference machine = new Preference(this);
+        machine.setTitle("Favorite Machine");
+
+        if(faveMach.equals("NONE"))
+        {
+            machine.setSummary("No favorite set");
+        }
+        else
+        {
+            machine.setSummary("Favorite machine is: " + faveMach.replace("-", " ").replace(".aspx", " - ").replace(":", ""));
+        }
+        machine.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 DialogFragment dialog = new ChooseFavoriteDialog();
@@ -69,7 +93,7 @@ public class SettingsActivity extends PreferenceActivity
                 return true;
             }
         });
-        gen.addPreference(sort);
+        gen.addPreference(machine);
 
         PreferenceCategory about = new PreferenceCategory(this);
         about.setTitle("About");
