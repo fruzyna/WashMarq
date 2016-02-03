@@ -29,6 +29,7 @@ public class BuildingActivity extends AppCompatActivity
     CheckBox unavailable;
     String url = "straz-tower.aspx";
     SharedPreferences prefs;
+    Context c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -73,10 +74,11 @@ public class BuildingActivity extends AppCompatActivity
                 updateList();
             }
         });
-        DataFetcher.fetchData(url);
+        DataFetcher.fetchData(url, this);
         machines = DataFetcher.machineList;
         updateList();
 
+        c = this;
         (new Thread()
         {
             public void run()
@@ -85,13 +87,13 @@ public class BuildingActivity extends AppCompatActivity
                 {
                     try
                     {
-                        Thread.sleep(15 * 1000);
+                        Thread.sleep(30 * 1000);
                     } catch (InterruptedException e)
                     {
                         e.printStackTrace();
                     }
                     System.out.println("Refreshing");
-                    DataFetcher.fetchData(url);
+                    DataFetcher.fetchData(url, c);
                     machines = DataFetcher.machineList;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -145,6 +147,7 @@ public class BuildingActivity extends AppCompatActivity
             }
             if(prefs.getString("FAVE_MACHINE", "NONE").equals(url + ":" + name))
             {
+                view.setBackgroundColor(Color.parseColor("#FFC107"));
                 list.addView(view, 0);
             }
             else if(status.equals("Available") || unavailable.isChecked())
@@ -193,7 +196,7 @@ public class BuildingActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                DataFetcher.fetchData(url);
+                DataFetcher.fetchData(url, c);
                 machines = DataFetcher.machineList;
                 updateList();
                 break;

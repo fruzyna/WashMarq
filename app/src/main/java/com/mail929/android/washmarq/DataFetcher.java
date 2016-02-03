@@ -1,6 +1,8 @@
 package com.mail929.android.washmarq;
 
+import android.content.Context;
 import android.os.NetworkOnMainThreadException;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,18 +19,18 @@ public class DataFetcher
 {
     public static ArrayList<Machine> machineList;
 
-    public static void fetchData(final String link)
+    public static void fetchData(final String link, final Context c)
     {
         Thread t = (new Thread() {
         public void run() {
 
-        machineList = new ArrayList<>();
         try
         {
             URL url = new URL("https://wash.mu.edu/washalertweb/" + link);
             System.out.println("Getting data from: " + url.toString());
-            BufferedReader in;
-            in = new BufferedReader(new InputStreamReader(url.openStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+
+            machineList = new ArrayList<>();
 
             String inputLine;
             StringBuilder sb = new StringBuilder();
@@ -38,9 +40,9 @@ public class DataFetcher
 
             String[] machines = sb.toString().split("<tr class=\"");
 
-
             for (int i = 0; i < machines.length; i++)
             {
+            System.out.println("Download: " + sb.toString());
                 String mode = machines[i].substring(0, machines[i].indexOf("\""));
 
                 String[] datas = machines[i].split("<td class=\"");
@@ -82,7 +84,7 @@ public class DataFetcher
         }
         catch(IOException e)
         {
-
+            Toast.makeText(c, "Downloading data failed, check your connection", Toast.LENGTH_LONG);
         }
         }
         });
