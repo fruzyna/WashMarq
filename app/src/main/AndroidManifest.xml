@@ -18,8 +18,9 @@
         </activity>
         <activity android:name=".BuildingActivity">
         </activity>
-    <activity android:name=".SettingsActivity">
-    </activity>
+        <activity android:name=".SettingsActivity">
+        </activity>
+        <receiver android:name=".NotificationPublisher" />
     </application>
 
 </manifest>

@@ -1,10 +1,14 @@
 package com.mail929.android.washmarq;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -117,10 +121,10 @@ public class BuildingActivity extends AppCompatActivity
             View view = inflater.inflate(R.layout.listitem_machine, list, false);
 
             Machine m = machines.get(i);
-            String status = m.status;
+            final String status = m.status;
             final String name = m.name;
-            String type = m.type;
-            int time = m.time;
+            final String type = m.type;
+            final int time = m.time;
 
             TextView nametv = (TextView) view.findViewById(R.id.top);
             nametv.setText(type + " " + name);
@@ -179,6 +183,7 @@ public class BuildingActivity extends AppCompatActivity
                     {
                         editor.putString("FAVE_MACHINE", url + ":" + name);
                         Toast.makeText(c, "Set favorite machine to: " + name, Toast.LENGTH_SHORT).show();
+                        scheduleNotification(getNotification(type + " " + name + " is ready!"), time * 60 * 1000);
                     }
                     else
                     {
@@ -190,6 +195,28 @@ public class BuildingActivity extends AppCompatActivity
                 }
             });
         }
+    }
+
+
+    private void scheduleNotification(Notification notification, int delay)
+    {
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    private Notification getNotification(String content)
+    {
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentTitle("Machine Complete");
+        builder.setContentText(content);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        return builder.build();
     }
 
     @Override
