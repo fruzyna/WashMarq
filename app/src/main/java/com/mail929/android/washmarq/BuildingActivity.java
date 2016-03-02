@@ -215,7 +215,7 @@ public class BuildingActivity extends AppCompatActivity
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentTitle("Machine Complete");
         builder.setContentText(content);
-        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setSmallIcon(R.mipmap.ic_notif);
         return builder.build();
     }
 
