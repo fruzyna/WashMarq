@@ -1,5 +1,6 @@
 package com.mail929.android.washmarq;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,13 +16,13 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class WashActivity extends AppCompatActivity
 {
-    ArrayList<Machine> machines;
     Context c;
 
     static final String[] urls = {"Abbottsford-Hall.aspx", "Campus-Town-East-Basement.aspx", "Campus-Town-East-2nd-Floor.aspx", "Campus-Town-East-3rd-Floor.aspx", "Campus-Town-East-4th-Floor.aspx", "Campus-Town-West-2nd-Floor.aspx", "Campus-Town-West-3rd-Floor.aspx", "Campus-Town-West-4th-Floor.aspx", "Carpenter-Tower.aspx", "Cobeen-Hall.aspx",
@@ -72,6 +73,19 @@ public class WashActivity extends AppCompatActivity
                 Intent intent = new Intent(c, BuildingActivity.class);
                 intent.putExtra("URL", urls[position]);
                 startActivity(intent);
+            }
+        });
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                SharedPreferences prefs = getSharedPreferences("WASHMARQ", 0);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("FAVE", WashActivity.urls[position]);
+                Toast.makeText(c, urls[position].replace("-", " ").replace(".aspx", " ") + "set as favorite", Toast.LENGTH_SHORT).show();
+                editor.commit();
+                return true;
             }
         });
     }

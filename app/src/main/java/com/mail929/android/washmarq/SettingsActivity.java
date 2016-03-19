@@ -85,14 +85,6 @@ public class SettingsActivity extends PreferenceActivity
         {
             machine.setSummary("Favorite machine is: " + faveMach.replace("-", " ").replace(".aspx", " - ").replace(":", ""));
         }
-        machine.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                DialogFragment dialog = new ChooseFavoriteDialog();
-                dialog.show(getFragmentManager(), "");
-                return true;
-            }
-        });
         gen.addPreference(machine);
 
         PreferenceCategory about = new PreferenceCategory(this);
