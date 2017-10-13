@@ -1,6 +1,7 @@
 package com.mail929.android.washmarq;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.NetworkOnMainThreadException;
 import android.widget.Toast;
 
@@ -11,26 +12,24 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mail929 on 1/26/16.
  */
-public class DataFetcher
+public class DataFetcher extends AsyncTask<Object, Void, ArrayList<Machine>>
 {
-    public static ArrayList<Machine> machineList;
+    ArrayList<Machine> machineList;
 
-    public static void fetchData(final String link, final Context c)
+    @Override
+    protected ArrayList<Machine> doInBackground(Object... objs)
     {
-        Thread t = (new Thread() {
-        public void run() {
-
+        machineList = new ArrayList<>();
         try
         {
-            URL url = new URL("https://wash.mu.edu/washalertweb/" + link);
+            URL url = new URL("https://wash.mu.edu/washalertweb/" + ((String) objs[0]));
             System.out.println("Getting data from: " + url.toString());
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-
-            machineList = new ArrayList<>();
 
             String inputLine;
             StringBuilder sb = new StringBuilder();
@@ -42,7 +41,7 @@ public class DataFetcher
 
             for (int i = 0; i < machines.length; i++)
             {
-            System.out.println("Download: " + sb.toString());
+                System.out.println("Download: " + sb.toString());
                 String mode = machines[i].substring(0, machines[i].indexOf("\""));
 
                 String[] datas = machines[i].split("<td class=\"");
@@ -84,19 +83,8 @@ public class DataFetcher
         }
         catch(IOException e)
         {
-            Toast.makeText(c, "Downloading data failed, check your connection", Toast.LENGTH_LONG);
+            Toast.makeText((Context) objs[1], "Downloading data failed, check your connection", Toast.LENGTH_LONG);
         }
-        }
-        });
-        t.start();
-        try
-        {
-            t.join();
-            System.out.println("Joined");
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        System.out.println("DataFetcher Finished");
+        return machineList;
     }
 }

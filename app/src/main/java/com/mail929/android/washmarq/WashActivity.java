@@ -4,6 +4,8 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WashActivity extends AppCompatActivity
 {
@@ -46,7 +49,7 @@ public class WashActivity extends AppCompatActivity
         }
 
         ListView list = (ListView) findViewById(R.id.list);
-        list.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, urls)
+        list.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_building, R.id.building, urls)
         {
             public View getView(final int position, View convertView, ViewGroup parent)
             {
@@ -54,13 +57,16 @@ public class WashActivity extends AppCompatActivity
                 if (convertView == null)
                 {
                     LayoutInflater infl = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                    convertView = infl.inflate(android.R.layout.simple_list_item_1, parent, false);
+                    convertView = infl.inflate(R.layout.listitem_building, parent, false);
                 }
                 view = super.getView(position, convertView, parent);
 
-                TextView name = (TextView) view.findViewById(android.R.id.text1);
+                TextView name = (TextView) view.findViewById(R.id.building);
                 String hall = urls[position].replace("-", " ").replace(".aspx", " ");
                 name.setText(hall);
+
+                ColorProgressBar colorBar = view.findViewById(R.id.colorbar);
+                new BarCreator().execute(getContext(), colorBar, urls[position]);
                 return view;
             }
         });
@@ -107,5 +113,51 @@ public class WashActivity extends AppCompatActivity
         // Inflate the inbuilding; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    public class BarCreator extends AsyncTask<Object, Void, Void>
+    {
+        ColorProgressBar bar;
+        String buildingUrl;
+        Context c;
+
+        int good = 0;
+        int moderate = 0;
+        int bad = 0;
+
+        @Override
+        protected Void doInBackground(Object... objects)
+        {
+            c = (Context) objects[0];
+            bar = (ColorProgressBar) objects[1];
+            buildingUrl = (String) objects[2];
+            List<Machine> machines = new DataFetcher().doInBackground(buildingUrl, c);
+            for (Machine m : machines)
+            {
+                final String status = m.status;
+                if (status.equals("Available"))
+                {
+                    good++;
+                }
+                else if (status.equals("In use") || status.equals("Not online") || status.equals("Out of order"))
+                {
+                    bad++;
+                }
+                else if (status.equals("Almost done") || status.equals("End of cycle") || status.equals("Ready to start") || status.equals("Payment in progress"))
+                {
+                    moderate++;
+                }
+            }
+
+            System.out.println("For " + buildingUrl + ": G-" + good + " M-" + moderate + " B-" + bad);
+            WashActivity.this.runOnUiThread(new Runnable()
+            {
+                public void run()
+                {
+                    bar.setProgress(good, moderate, bad);
+                }
+            });
+            return null;
+        }
     }
 }

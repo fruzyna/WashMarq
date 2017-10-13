@@ -48,7 +48,6 @@ public class BuildingActivity extends AppCompatActivity
 
         getSupportActionBar().setTitle(url.replace("-", " ").replace(".aspx", " "));
 
-        machines = DataFetcher.machineList;
         list = (LinearLayout) findViewById(R.id.list);
 
         washers = ((CheckBox) findViewById(R.id.washers));
@@ -78,9 +77,6 @@ public class BuildingActivity extends AppCompatActivity
                 updateList();
             }
         });
-        DataFetcher.fetchData(url, this);
-        machines = DataFetcher.machineList;
-        updateList();
 
         c = this;
         (new Thread()
@@ -89,6 +85,14 @@ public class BuildingActivity extends AppCompatActivity
             {
                 while(true)
                 {
+                    System.out.println("Refreshing");
+                    machines = new DataFetcher().doInBackground(url, c);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateList();
+                        }
+                    });
                     try
                     {
                         Thread.sleep(30 * 1000);
@@ -96,15 +100,6 @@ public class BuildingActivity extends AppCompatActivity
                     {
                         e.printStackTrace();
                     }
-                    System.out.println("Refreshing");
-                    DataFetcher.fetchData(url, c);
-                    machines = DataFetcher.machineList;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateList();
-                        }
-                    });
                 }
             }
         }).start();
@@ -223,8 +218,7 @@ public class BuildingActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                DataFetcher.fetchData(url, c);
-                machines = DataFetcher.machineList;
+                machines = new DataFetcher().doInBackground(url, c);
                 updateList();
                 break;
             case R.id.action_settings:
